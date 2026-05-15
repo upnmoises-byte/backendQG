@@ -37,6 +37,10 @@ public class PedidoDetalle {
     @JoinColumn(name = "pedido_id")
     private Pedido pedido;
 
-    @OneToMany(mappedBy = "detalle", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PedidoDetalleEspecial> especiales;
+    @OneToMany(
+    mappedBy = "pedido",
+    cascade = CascadeType.ALL,
+    fetch = FetchType.EAGER
+    )
+    private List<PedidoDetalleEspecial> detallesEspeciales;
 }

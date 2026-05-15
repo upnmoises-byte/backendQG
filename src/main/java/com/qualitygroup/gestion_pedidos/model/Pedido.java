@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import jakarta.persistence.FetchType;
 
 @Data
 @Entity
@@ -57,10 +58,10 @@ public class Pedido {
     private BigDecimal adelanto = BigDecimal.ZERO;
 
     @OneToMany(
-        mappedBy = "pedido",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
+    mappedBy = "pedido",
+    cascade = CascadeType.ALL,
+    fetch = FetchType.EAGER
     )
-    private List<PedidoDetalle> detalles = new ArrayList<>();
+    private List<PedidoDetalle> detalles;
 }
 
