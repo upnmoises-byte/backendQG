@@ -14,11 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -27,6 +30,11 @@ public class PagoPedidoService {
     private static final Set<String> METODOS = new HashSet<>(Arrays.asList(
             "BCP", "YAPE", "BBVA", "EFECTIVO", "VISA"
     ));
+
+    private static final String METODO_EFECTIVO = "EFECTIVO";
+
+    /** Ventana para rechazar el mismo abono por doble clic. */
+    private static final int SEGUNDOS_ANTIDUPLICADO = 12;
 
     private final PagoPedidoRepository pagoPedidoRepository;
     private final PedidoRepository pedidoRepository;
@@ -56,25 +64,29 @@ public class PagoPedidoService {
         if (req.getMetodoPago() == null || req.getMetodoPago().isBlank()) {
             throw new IllegalArgumentException("Indique el método de pago");
         }
+
         String metodo = req.getMetodoPago().trim().toUpperCase();
         if (!METODOS.contains(metodo)) {
             throw new IllegalArgumentException("Método de pago no válido");
         }
 
-        Pedido pedido = pedidoRepository.findById(pedidoId)
+        String codigoPago = normalizarCodigoPago(metodo, req.getCodigoPago());
+
+        Pedido pedido = pedidoRepository.findByIdForUpdate(pedidoId)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
 
-        BigDecimal adelantoActual = pedido.getAdelanto() != null ? pedido.getAdelanto() : BigDecimal.ZERO;
-        BigDecimal nuevoAdelanto = adelantoActual.add(req.getMonto());
+        assertNoDuplicadoReciente(pedidoId, req.getMonto(), metodo, codigoPago);
 
-        pedido.setAdelanto(nuevoAdelanto);
+        BigDecimal adelantoActual = pedido.getAdelanto() != null ? pedido.getAdelanto() : BigDecimal.ZERO;
+        pedido.setAdelanto(adelantoActual.add(req.getMonto()));
         pedidoRepository.save(pedido);
 
         PagoPedido p = new PagoPedido();
         p.setPedido(pedido);
         p.setMonto(req.getMonto());
         p.setMetodoPago(metodo);
-        p.setNota(req.getNota());
+        p.setCodigoPago(codigoPago);
+        p.setNota(req.getNota() != null ? req.getNota().trim() : null);
         p.setFechaRegistro(LocalDate.now());
         p.setHoraRegistro(LocalTime.now());
 
@@ -86,6 +98,53 @@ public class PagoPedidoService {
         return pagoPedidoRepository.save(p);
     }
 
+    private static String normalizarCodigoPago(String metodo, String codigoRaw) {
+        if (METODO_EFECTIVO.equals(metodo)) {
+            return null;
+        }
+        if (codigoRaw == null || codigoRaw.isBlank()) {
+            throw new IllegalArgumentException("Indique el código de operación del pago");
+        }
+        String codigo = codigoRaw.trim();
+        if (codigo.length() < 3 || codigo.length() > 64) {
+            throw new IllegalArgumentException("El código de operación debe tener entre 3 y 64 caracteres");
+        }
+        return codigo;
+    }
+
+    private void assertNoDuplicadoReciente(
+            Long pedidoId,
+            BigDecimal monto,
+            String metodo,
+            String codigoPago
+    ) {
+        Optional<PagoPedido> ultimo = pagoPedidoRepository.findFirstByPedido_IdOrderByIdDesc(pedidoId);
+        if (ultimo.isEmpty()) {
+            return;
+        }
+        PagoPedido u = ultimo.get();
+        if (u.getMonto() == null || u.getMonto().compareTo(monto) != 0 || !metodo.equals(u.getMetodoPago())) {
+            return;
+        }
+        if (!Objects.equals(
+                codigoPago != null ? codigoPago : "",
+                u.getCodigoPago() != null ? u.getCodigoPago() : ""
+        )) {
+            return;
+        }
+        if (u.getFechaRegistro() == null || u.getHoraRegistro() == null) {
+            return;
+        }
+        LocalDate hoy = LocalDate.now();
+        if (!hoy.equals(u.getFechaRegistro())) {
+            return;
+        }
+        long segundos = Duration.between(u.getHoraRegistro(), LocalTime.now()).getSeconds();
+        if (segundos >= 0 && segundos <= SEGUNDOS_ANTIDUPLICADO) {
+            throw new IllegalArgumentException("Este abono ya fue registrado. Evite hacer doble clic en Guardar.");
+        }
+    }
+
     private void assertPuedeRegistrarPago() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
@@ -93,7 +152,7 @@ public class PagoPedidoService {
         }
         boolean ok = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .filter(a -> a != null)
+                .filter(Objects::nonNull)
                 .map(String::toUpperCase)
                 .anyMatch(a -> a.equals("ROLE_ADMIN") || a.equals("ROLE_PRODUCCION") || a.equals("ROLE_CAJA"));
         if (!ok) {

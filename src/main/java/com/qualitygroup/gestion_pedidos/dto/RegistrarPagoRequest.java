@@ -10,5 +10,7 @@ public class RegistrarPagoRequest {
     private BigDecimal monto;
     /** BCP, YAPE, BBVA, EFECTIVO, VISA */
     private String metodoPago;
+    /** Obligatorio salvo EFECTIVO (número de operación / voucher). */
+    private String codigoPago;
     private String nota;
 }

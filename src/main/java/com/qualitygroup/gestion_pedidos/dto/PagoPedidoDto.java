@@ -16,6 +16,7 @@ public class PagoPedidoDto {
     Long pedidoId;
     BigDecimal monto;
     String metodoPago;
+    String codigoPago;
     String nota;
     LocalDate fechaRegistro;
     LocalTime horaRegistro;
@@ -30,6 +31,7 @@ public class PagoPedidoDto {
                 .pedidoId(pid)
                 .monto(p.getMonto())
                 .metodoPago(p.getMetodoPago())
+                .codigoPago(p.getCodigoPago())
                 .nota(p.getNota())
                 .fechaRegistro(p.getFechaRegistro())
                 .horaRegistro(p.getHoraRegistro())

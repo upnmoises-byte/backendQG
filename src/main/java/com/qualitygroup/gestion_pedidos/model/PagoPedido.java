@@ -29,6 +29,10 @@ public class PagoPedido {
     @Column(nullable = false, length = 32)
     private String metodoPago;
 
+    /** Código de operación (Yape, transferencia, etc.). Null en EFECTIVO. */
+    @Column(length = 64)
+    private String codigoPago;
+
     @Column(columnDefinition = "TEXT")
     private String nota;
 

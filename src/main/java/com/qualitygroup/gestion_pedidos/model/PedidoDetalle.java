@@ -22,6 +22,10 @@ public class PedidoDetalle {
     private String material;
     private String maquina;
 
+    /** Estado de producción de este material (independiente por línea). */
+    @Column(length = 32)
+    private String estado;
+
     private Integer cortes;
     private Integer ranuras;
     private Integer perforaciones;
