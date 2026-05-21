@@ -57,11 +57,7 @@ public class Pedido {
     private BigDecimal total = BigDecimal.ZERO;
     private BigDecimal adelanto = BigDecimal.ZERO;
 
-    @OneToMany(
-    mappedBy = "pedido",
-    cascade = CascadeType.ALL,
-    fetch = FetchType.EAGER
-    )
-    private List<PedidoDetalle> detalles;
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<PedidoDetalle> detalles = new ArrayList<>();
 }
 

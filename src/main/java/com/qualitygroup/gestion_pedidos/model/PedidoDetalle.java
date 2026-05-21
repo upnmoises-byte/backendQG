@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,9 +39,10 @@ public class PedidoDetalle {
     private Pedido pedido;
 
     @OneToMany(
-    mappedBy = "pedido",
+    mappedBy = "detalle",
     cascade = CascadeType.ALL,
+    orphanRemoval = true,
     fetch = FetchType.EAGER
     )
-    private List<PedidoDetalleEspecial> detallesEspeciales;
+    private List<PedidoDetalleEspecial> especiales = new ArrayList<>();
 }
