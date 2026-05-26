@@ -40,7 +40,7 @@ public class PedidoService {
     }
 
     public List<Pedido> listarTodos() {
-        return pedidoRepository.findAll();
+        return pedidoRepository.findAllWithDetalles();
     }
 
     public List<Pedido> listarPorEstado(String estado) {
