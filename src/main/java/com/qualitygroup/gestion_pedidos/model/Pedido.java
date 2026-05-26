@@ -51,6 +51,10 @@ public class Pedido {
     private LocalDate fechaEntrega;
     private LocalTime horaEntrega;
 
+    private LocalDate fechaModificacion;
+    private LocalTime horaModificacion;
+    private String usuarioModificacion;
+
     private Integer prioridad;
 
     private BigDecimal total = BigDecimal.ZERO;

@@ -140,6 +140,11 @@ public class PedidoService {
         actual.setCantoDelgado36mm(pedidoActualizado.getCantoDelgado36mm());
         actual.setCantoGrueso36mm(pedidoActualizado.getCantoGrueso36mm());
         actual.setCantidadEspeciales(pedidoActualizado.getCantidadEspeciales());
+        actual.setFechaModificacion(LocalDate.now());
+        actual.setHoraModificacion(LocalTime.now());
+        actual.setUsuarioModificacion(usuarioNombre != null && !usuarioNombre.isBlank()
+                ? usuarioNombre
+                : usuarioCorreo);
 
         if (pedidoActualizado.getDetalles() != null) {
             fusionarDetalles(actual, pedidoActualizado.getDetalles());
@@ -282,10 +287,26 @@ public class PedidoService {
         if (pedido.getVendedora() == null || pedido.getVendedora().isBlank()) {
             throw new IllegalArgumentException("Seleccione una vendedora");
         }
+        if (pedido.getFechaEntrega() == null) {
+            throw new IllegalArgumentException("Seleccione fecha de entrega");
+        }
+        if (pedido.getHoraEntrega() == null) {
+            throw new IllegalArgumentException("Seleccione hora de entrega");
+        }
+        if (pedido.getFechaEntrega().isBefore(LocalDate.now())
+                || (pedido.getFechaEntrega().isEqual(LocalDate.now()) && pedido.getHoraEntrega().isBefore(LocalTime.now()))) {
+            throw new IllegalArgumentException("La fecha y hora de entrega deben ser posteriores al momento actual.");
+        }
+        if (pedido.getTotal() == null) {
+            throw new IllegalArgumentException("Ingrese el total del pedido");
+        }
         BigDecimal total = pedido.getTotal() != null ? pedido.getTotal() : BigDecimal.ZERO;
         BigDecimal adelanto = pedido.getAdelanto() != null ? pedido.getAdelanto() : BigDecimal.ZERO;
         if (total.compareTo(BigDecimal.ZERO) < 0 || adelanto.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Total y adelanto no pueden ser negativos");
+        }
+        if (total.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Ingrese un total mayor a 0");
         }
         if (adelanto.compareTo(total) > 0) {
             throw new IllegalArgumentException("El adelanto no puede ser mayor al total del pedido");
@@ -296,7 +317,7 @@ public class PedidoService {
         boolean intentaEntregado = "ENTREGADO".equalsIgnoreCase(pedido.getEstado())
                 || pedido.getDetalles().stream().anyMatch(d -> "ENTREGADO".equalsIgnoreCase(d.getEstado()));
         if (intentaEntregado && saldoPedido(pedido).compareTo(BigDecimal.ZERO) > 0) {
-            throw new IllegalArgumentException("No puede pasar a ENTREGADO con saldo pendiente. Cancele la deuda o registre abonos antes.");
+            throw new IllegalArgumentException("El pedido debe estar cancelado para marcarse como entregado.");
         }
         for (PedidoDetalle detalle : pedido.getDetalles()) {
             if (detalle.getMaterial() == null || detalle.getMaterial().isBlank()) {
@@ -451,7 +472,7 @@ public class PedidoService {
         Pedido pedido = pedidoRepository.findByIdForUpdate(pedidoId)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
         if ("ENTREGADO".equals(estadoNorm) && saldoPedido(pedido).compareTo(BigDecimal.ZERO) > 0) {
-            throw new IllegalArgumentException("No puede pasar a ENTREGADO con saldo pendiente. Cancele la deuda o registre abonos antes.");
+            throw new IllegalArgumentException("El pedido debe estar cancelado para marcarse como entregado.");
         }
 
         PedidoDetalle detalle = pedido.getDetalles().stream()
