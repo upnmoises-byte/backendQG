@@ -8,4 +8,6 @@ import java.util.List;
 public interface AuditoriaPedidoRepository extends JpaRepository<AuditoriaPedido, Long> {
 
     List<AuditoriaPedido> findByPedidoIdOrderByFechaCambioDescHoraCambioDesc(Long pedidoId);
+
+    void deleteByPedidoId(Long pedidoId);
 }

@@ -78,7 +78,7 @@ public class ClienteService {
 
         clienteRepository.findFirstByDocumentoIgnoreCase(documento).ifPresent(existente -> {
             if (!Objects.equals(existente.getId(), idActual)) {
-                throw new IllegalArgumentException("No se puede registrar. Ya existe un cliente con este DNI/RUC.");
+                throw new IllegalArgumentException("Ya existe un cliente registrado con ese documento");
             }
         });
 

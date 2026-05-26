@@ -5,6 +5,7 @@ import com.qualitygroup.gestion_pedidos.model.Pedido;
 import com.qualitygroup.gestion_pedidos.model.PedidoDetalle;
 import com.qualitygroup.gestion_pedidos.model.PedidoDetalleEspecial;
 import com.qualitygroup.gestion_pedidos.repository.AuditoriaPedidoRepository;
+import com.qualitygroup.gestion_pedidos.repository.PagoPedidoRepository;
 import com.qualitygroup.gestion_pedidos.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,13 +27,16 @@ public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
     private final AuditoriaPedidoRepository auditoriaRepository;
+    private final PagoPedidoRepository pagoPedidoRepository;
 
     public PedidoService(
             PedidoRepository pedidoRepository,
-            AuditoriaPedidoRepository auditoriaRepository
+            AuditoriaPedidoRepository auditoriaRepository,
+            PagoPedidoRepository pagoPedidoRepository
     ) {
         this.pedidoRepository = pedidoRepository;
         this.auditoriaRepository = auditoriaRepository;
+        this.pagoPedidoRepository = pagoPedidoRepository;
     }
 
     public List<Pedido> listarTodos() {
@@ -477,7 +481,12 @@ public class PedidoService {
         return guardado;
     }
 
+    @Transactional
     public void eliminar(Long id) {
-        pedidoRepository.deleteById(id);
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
+        pagoPedidoRepository.deleteByPedido_Id(id);
+        auditoriaRepository.deleteByPedidoId(id);
+        pedidoRepository.delete(pedido);
     }
 }

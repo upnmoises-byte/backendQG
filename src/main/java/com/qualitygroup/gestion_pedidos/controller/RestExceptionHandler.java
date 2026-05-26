@@ -51,9 +51,15 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, Object>> conflict(DataIntegrityViolationException ex) {
+        String detalle = ex.getMostSpecificCause() != null
+                ? String.valueOf(ex.getMostSpecificCause().getMessage()).toLowerCase()
+                : "";
+        String mensaje = detalle.contains("documento") || detalle.contains("clientes")
+                ? "Ya existe un cliente registrado con ese documento"
+                : "No se pudo eliminar el pedido porque tiene registros relacionados.";
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
                 "error", "CONFLICT",
-                "mensaje", "No se pudo guardar: datos duplicados o restricción de integridad"
+                "mensaje", mensaje
         ));
     }
 

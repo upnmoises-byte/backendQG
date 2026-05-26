@@ -16,5 +16,7 @@ public interface PagoPedidoRepository extends JpaRepository<PagoPedido, Long> {
     @Query("SELECT SUM(p.monto) FROM PagoPedido p WHERE p.pedido.id = :pedidoId")
     java.math.BigDecimal sumarMontoPorPedidoId(@Param("pedidoId") Long pedidoId);
 
+    void deleteByPedido_Id(Long pedidoId);
+
     Optional<PagoPedido> findFirstByPedido_IdOrderByIdDesc(Long pedidoId);
 }
