@@ -7,6 +7,7 @@ import com.qualitygroup.gestion_pedidos.model.PedidoDetalleEspecial;
 import com.qualitygroup.gestion_pedidos.repository.AuditoriaPedidoRepository;
 import com.qualitygroup.gestion_pedidos.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -320,6 +321,50 @@ public class PedidoService {
         auditoria.setFechaCambio(LocalDate.now());
         auditoria.setHoraCambio(LocalTime.now());
         auditoriaRepository.save(auditoria);
+    }
+
+    @Transactional
+    public Pedido actualizarEstadoDetalle(
+            Long pedidoId,
+            Long detalleId,
+            String nuevoEstado,
+            String usuarioNombre,
+            String usuarioCorreo,
+            String usuarioRol
+    ) {
+        if (nuevoEstado == null || nuevoEstado.isBlank()) {
+            throw new IllegalArgumentException("Indique el estado");
+        }
+        String estadoNorm = nuevoEstado.trim().toUpperCase();
+
+        Pedido pedido = pedidoRepository.findByIdForUpdate(pedidoId)
+                .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
+
+        PedidoDetalle detalle = pedido.getDetalles().stream()
+                .filter(d -> detalleId.equals(d.getId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Material no encontrado en el pedido"));
+
+        String estadoAnterior = estadoDetalle(detalle, pedido);
+        if (estadoAnterior.equals(estadoNorm)) {
+            return pedido;
+        }
+
+        detalle.setEstado(estadoNorm);
+        sincronizarEstadoPedido(pedido);
+        Pedido guardado = pedidoRepository.save(pedido);
+
+        String material = detalle.getMaterial() != null ? detalle.getMaterial() : "Material";
+        guardarAuditoria(
+                guardado,
+                estadoAnterior,
+                estadoNorm + " · " + material,
+                usuarioNombre,
+                usuarioCorreo,
+                usuarioRol
+        );
+
+        return guardado;
     }
 
     public void eliminar(Long id) {

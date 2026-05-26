@@ -73,7 +73,9 @@ public class RestExceptionHandler {
         log.error("Error no controlado", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
                 "error", "INTERNAL_ERROR",
-                "mensaje", "Ha ocurrido un error en el servidor. Intente más tarde."
+                "mensaje", ex.getMessage() != null && !ex.getMessage().isBlank()
+                        ? ex.getMessage()
+                        : "Error interno no controlado. Revise los logs del backend."
         ));
     }
 }

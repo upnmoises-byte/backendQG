@@ -1,5 +1,6 @@
 package com.qualitygroup.gestion_pedidos.controller;
 
+import com.qualitygroup.gestion_pedidos.dto.ActualizarEstadoDetalleRequest;
 import com.qualitygroup.gestion_pedidos.dto.PagoPedidoDto;
 import com.qualitygroup.gestion_pedidos.dto.RegistrarPagoRequest;
 import com.qualitygroup.gestion_pedidos.model.AuditoriaPedido;
@@ -10,6 +11,8 @@ import com.qualitygroup.gestion_pedidos.repository.ClienteRepository;
 import com.qualitygroup.gestion_pedidos.service.PagoPedidoService;
 import com.qualitygroup.gestion_pedidos.service.PedidoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/pedidos")
 public class PedidoController {
+
+    private static final Logger log = LoggerFactory.getLogger(PedidoController.class);
 
     private final PedidoService pedidoService;
     private final AuditoriaPedidoRepository auditoriaRepository;
@@ -74,6 +79,23 @@ public class PedidoController {
     @PostMapping
     public Pedido crear(@RequestBody Pedido pedido) {
         return pedidoService.guardar(pedido);
+    }
+
+    @PutMapping("/{pedidoId}/detalles/{detalleId}/estado")
+    public Pedido actualizarEstadoDetalle(
+            @PathVariable Long pedidoId,
+            @PathVariable Long detalleId,
+            @RequestBody ActualizarEstadoDetalleRequest body
+    ) {
+        log.info("Actualizar estado detalle: pedidoId={}, detalleId={}, estado={}", pedidoId, detalleId, body.getEstado());
+        return pedidoService.actualizarEstadoDetalle(
+                pedidoId,
+                detalleId,
+                body.getEstado(),
+                body.getUsuarioNombre(),
+                body.getUsuarioCorreo(),
+                body.getUsuarioRol()
+        );
     }
 
     @PutMapping("/{id}")
