@@ -59,7 +59,7 @@ public class PagoPedidoService {
         assertPuedeRegistrarPago();
 
         if (req.getMonto() == null || req.getMonto().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("El monto debe ser mayor a 0");
+            throw new IllegalArgumentException("El monto debe ser mayor a cero.");
         }
         if (req.getMetodoPago() == null || req.getMetodoPago().isBlank()) {
             throw new IllegalArgumentException("Indique el método de pago");
@@ -74,11 +74,28 @@ public class PagoPedidoService {
 
         Pedido pedido = pedidoRepository.findByIdForUpdate(pedidoId)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
+        if ("CANCELADO".equalsIgnoreCase(pedido.getEstado())) {
+            throw new IllegalArgumentException("Este pedido ya está cancelado. No se pueden registrar más pagos.");
+        }
+
+        BigDecimal totalPedido = pedido.getTotal() != null ? pedido.getTotal() : BigDecimal.ZERO;
+        BigDecimal totalRegistrado = pagoPedidoRepository.sumarMontoPorPedidoId(pedidoId);
+        if (totalRegistrado == null) {
+            totalRegistrado = BigDecimal.ZERO;
+        }
+        BigDecimal adelantoActual = pedido.getAdelanto() != null ? pedido.getAdelanto() : BigDecimal.ZERO;
+        BigDecimal totalPagado = adelantoActual.max(totalRegistrado);
+        BigDecimal saldoPendiente = totalPedido.subtract(totalPagado);
+        if (saldoPendiente.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Este pedido ya está cancelado. No se pueden registrar más pagos.");
+        }
+        if (req.getMonto().compareTo(saldoPendiente) > 0) {
+            throw new IllegalArgumentException("El monto no puede superar el saldo pendiente.");
+        }
 
         assertNoDuplicadoReciente(pedidoId, req.getMonto(), metodo, codigoPago);
 
-        BigDecimal adelantoActual = pedido.getAdelanto() != null ? pedido.getAdelanto() : BigDecimal.ZERO;
-        pedido.setAdelanto(adelantoActual.add(req.getMonto()));
+        pedido.setAdelanto(totalPagado.add(req.getMonto()));
         pedidoRepository.save(pedido);
 
         PagoPedido p = new PagoPedido();
@@ -106,8 +123,14 @@ public class PagoPedidoService {
             throw new IllegalArgumentException("Indique el código de operación del pago");
         }
         String codigo = codigoRaw.trim();
-        if (codigo.length() < 3 || codigo.length() > 64) {
-            throw new IllegalArgumentException("El código de operación debe tener entre 3 y 64 caracteres");
+        if (!codigo.matches("\\d+")) {
+            throw new IllegalArgumentException("El código de operación debe contener solo números.");
+        }
+        if (codigo.isBlank()) {
+            throw new IllegalArgumentException("Indique el código de operación del pago");
+        }
+        if (codigo.length() > 12) {
+            throw new IllegalArgumentException("El código de operación debe tener máximo 12 dígitos.");
         }
         return codigo;
     }

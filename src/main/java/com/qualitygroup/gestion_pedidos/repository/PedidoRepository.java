@@ -18,6 +18,10 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     List<Pedido> findByMaquina(String maquina);
 
+    Optional<Pedido> findFirstByNumeroOrden(String numeroOrden);
+
+    List<Pedido> findByNumeroOrdenStartingWith(String prefijo);
+
     @Query("SELECT DISTINCT p FROM Pedido p LEFT JOIN FETCH p.cliente LEFT JOIN FETCH p.detalles")
     List<Pedido> findAllWithDetalles();
 

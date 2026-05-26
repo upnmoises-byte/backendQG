@@ -78,7 +78,7 @@ public class ClienteService {
 
         clienteRepository.findFirstByDocumentoIgnoreCase(documento).ifPresent(existente -> {
             if (!Objects.equals(existente.getId(), idActual)) {
-                throw new IllegalArgumentException("Ya existe un cliente registrado con este documento.");
+                throw new IllegalArgumentException("No se puede registrar. Ya existe un cliente con este DNI/RUC.");
             }
         });
 
@@ -88,7 +88,7 @@ public class ClienteService {
                 .filter(c -> normalizarNombre(c.getNombre()).equals(nombreNormalizado))
                 .findFirst()
                 .ifPresent(c -> {
-                    throw new IllegalArgumentException("Ya existe un cliente registrado con este nombre o razón social.");
+                    throw new IllegalArgumentException("Ya existe un cliente con este nombre o razón social.");
                 });
 
         cliente.setDocumento(documento);

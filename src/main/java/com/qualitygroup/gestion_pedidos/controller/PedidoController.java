@@ -57,6 +57,11 @@ public class PedidoController {
         return pedidoService.listarPorEstado(estado);
     }
 
+    @GetMapping("/siguiente-numero")
+    public Map<String, String> siguienteNumero(@RequestParam(defaultValue = "27000") String serie) {
+        return Map.of("numeroOrden", pedidoService.siguienteNumeroOrden(serie));
+    }
+
     @GetMapping("/{id}/pagos")
     @PreAuthorize("hasAnyRole('ADMIN','PRODUCCION','CAJA')")
     public List<PagoPedidoDto> listarPagos(@PathVariable Long id) {

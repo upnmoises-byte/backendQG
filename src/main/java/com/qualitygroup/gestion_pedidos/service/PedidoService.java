@@ -47,6 +47,24 @@ public class PedidoService {
         return pedidoRepository.findById(id);
     }
 
+    public String siguienteNumeroOrden(String serieRaw) {
+        String serie = (serieRaw == null || serieRaw.isBlank()) ? "27000" : serieRaw.trim();
+        int base;
+        try {
+            base = Integer.parseInt(serie);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException("Serie inválida");
+        }
+        String prefijo = serie.length() >= 2 ? serie.substring(0, 2) : serie;
+        int max = pedidoRepository.findByNumeroOrdenStartingWith(prefijo).stream()
+                .map(Pedido::getNumeroOrden)
+                .filter(n -> n != null && n.matches("\\d+"))
+                .mapToInt(Integer::parseInt)
+                .max()
+                .orElse(base);
+        return String.valueOf(Math.max(max, base) + 1);
+    }
+
     public Pedido guardar(Pedido pedido) {
 
         if (pedido.getFechaIngreso() == null) {
@@ -76,7 +94,8 @@ public class PedidoService {
             sincronizarEstadoPedido(pedido);
         }
 
-        validarPedido(pedido);
+        normalizarPedido(pedido);
+        validarPedido(pedido, null);
         return pedidoRepository.save(pedido);
     }
 
@@ -130,7 +149,8 @@ public class PedidoService {
             }
         }
 
-        validarPedido(actual);
+        normalizarPedido(actual);
+        validarPedido(actual, id);
         Pedido guardado = pedidoRepository.save(actual);
 
         registrarAuditoriaCambiosEstado(
@@ -211,10 +231,47 @@ public class PedidoService {
         }
     }
 
-    private static void validarPedido(Pedido pedido) {
+    private static void normalizarPedido(Pedido pedido) {
+        if (pedido.getNumeroOrden() != null) {
+            pedido.setNumeroOrden(pedido.getNumeroOrden().trim());
+        }
+        if (pedido.getVendedora() != null) {
+            pedido.setVendedora(pedido.getVendedora().trim().toUpperCase());
+        }
+        if (pedido.getColorPrincipal() != null) {
+            pedido.setColorPrincipal(pedido.getColorPrincipal().trim().toUpperCase());
+        }
+        if (pedido.getColorSecundario() != null) {
+            pedido.setColorSecundario(pedido.getColorSecundario().trim().toUpperCase());
+        }
+        if (pedido.getColorTercero() != null) {
+            pedido.setColorTercero(pedido.getColorTercero().trim().toUpperCase());
+        }
+        if (pedido.getDetalles() != null) {
+            for (PedidoDetalle detalle : pedido.getDetalles()) {
+                if (detalle.getMaterial() != null) {
+                    detalle.setMaterial(detalle.getMaterial().trim().toUpperCase());
+                }
+                if (detalle.getEspeciales() != null) {
+                    for (PedidoDetalleEspecial especial : detalle.getEspeciales()) {
+                        if (especial.getDescripcion() != null) {
+                            especial.setDescripcion(especial.getDescripcion().trim().toUpperCase());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void validarPedido(Pedido pedido, Long idActual) {
         if (pedido.getNumeroOrden() == null || pedido.getNumeroOrden().isBlank()) {
             throw new IllegalArgumentException("Ingrese el N° de orden");
         }
+        pedidoRepository.findFirstByNumeroOrden(pedido.getNumeroOrden().trim()).ifPresent(existente -> {
+            if (idActual == null || !Objects.equals(existente.getId(), idActual)) {
+                throw new IllegalArgumentException("Ya existe un pedido registrado con este número de orden.");
+            }
+        });
         if (pedido.getCliente() == null || pedido.getCliente().getId() == null) {
             throw new IllegalArgumentException("Seleccione un cliente");
         }
@@ -232,6 +289,11 @@ public class PedidoService {
         if (pedido.getDetalles() == null || pedido.getDetalles().isEmpty()) {
             throw new IllegalArgumentException("Agregue al menos un material al pedido");
         }
+        boolean intentaEntregado = "ENTREGADO".equalsIgnoreCase(pedido.getEstado())
+                || pedido.getDetalles().stream().anyMatch(d -> "ENTREGADO".equalsIgnoreCase(d.getEstado()));
+        if (intentaEntregado && saldoPedido(pedido).compareTo(BigDecimal.ZERO) > 0) {
+            throw new IllegalArgumentException("No puede pasar a ENTREGADO con saldo pendiente. Cancele la deuda o registre abonos antes.");
+        }
         for (PedidoDetalle detalle : pedido.getDetalles()) {
             if (detalle.getMaterial() == null || detalle.getMaterial().isBlank()) {
                 throw new IllegalArgumentException("Cada material debe tener nombre/color");
@@ -244,6 +306,13 @@ public class PedidoService {
                 throw new IllegalArgumentException("Cada material debe tener máquina asignada");
             }
         }
+    }
+
+    private static BigDecimal saldoPedido(Pedido pedido) {
+        BigDecimal total = pedido.getTotal() != null ? pedido.getTotal() : BigDecimal.ZERO;
+        BigDecimal adelanto = pedido.getAdelanto() != null ? pedido.getAdelanto() : BigDecimal.ZERO;
+        BigDecimal saldo = total.subtract(adelanto);
+        return saldo.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : saldo;
     }
 
     /** Estado resumen del pedido según los materiales. */
@@ -377,6 +446,9 @@ public class PedidoService {
 
         Pedido pedido = pedidoRepository.findByIdForUpdate(pedidoId)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
+        if ("ENTREGADO".equals(estadoNorm) && saldoPedido(pedido).compareTo(BigDecimal.ZERO) > 0) {
+            throw new IllegalArgumentException("No puede pasar a ENTREGADO con saldo pendiente. Cancele la deuda o registre abonos antes.");
+        }
 
         PedidoDetalle detalle = pedido.getDetalles().stream()
                 .filter(d -> detalleId.equals(d.getId()))
