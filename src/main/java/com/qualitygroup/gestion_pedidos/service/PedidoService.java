@@ -9,6 +9,7 @@ import com.qualitygroup.gestion_pedidos.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ public class PedidoService {
             sincronizarEstadoPedido(pedido);
         }
 
+        validarPedido(pedido);
         return pedidoRepository.save(pedido);
     }
 
@@ -128,6 +130,7 @@ public class PedidoService {
             }
         }
 
+        validarPedido(actual);
         Pedido guardado = pedidoRepository.save(actual);
 
         registrarAuditoriaCambiosEstado(
@@ -205,6 +208,41 @@ public class PedidoService {
     private static void vincularEspeciales(PedidoDetalle detalle) {
         if (detalle.getEspeciales() != null) {
             detalle.getEspeciales().forEach(especial -> especial.setDetalle(detalle));
+        }
+    }
+
+    private static void validarPedido(Pedido pedido) {
+        if (pedido.getNumeroOrden() == null || pedido.getNumeroOrden().isBlank()) {
+            throw new IllegalArgumentException("Ingrese el N° de orden");
+        }
+        if (pedido.getCliente() == null || pedido.getCliente().getId() == null) {
+            throw new IllegalArgumentException("Seleccione un cliente");
+        }
+        if (pedido.getVendedora() == null || pedido.getVendedora().isBlank()) {
+            throw new IllegalArgumentException("Seleccione una vendedora");
+        }
+        BigDecimal total = pedido.getTotal() != null ? pedido.getTotal() : BigDecimal.ZERO;
+        BigDecimal adelanto = pedido.getAdelanto() != null ? pedido.getAdelanto() : BigDecimal.ZERO;
+        if (total.compareTo(BigDecimal.ZERO) < 0 || adelanto.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Total y adelanto no pueden ser negativos");
+        }
+        if (adelanto.compareTo(total) > 0) {
+            throw new IllegalArgumentException("El adelanto no puede ser mayor al total del pedido");
+        }
+        if (pedido.getDetalles() == null || pedido.getDetalles().isEmpty()) {
+            throw new IllegalArgumentException("Agregue al menos un material al pedido");
+        }
+        for (PedidoDetalle detalle : pedido.getDetalles()) {
+            if (detalle.getMaterial() == null || detalle.getMaterial().isBlank()) {
+                throw new IllegalArgumentException("Cada material debe tener nombre/color");
+            }
+            BigDecimal cantidad = detalle.getCantidad() != null ? detalle.getCantidad() : BigDecimal.ZERO;
+            if (cantidad.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new IllegalArgumentException("Cada material debe tener cantidad mayor a 0");
+            }
+            if (detalle.getMaquina() == null || detalle.getMaquina().isBlank()) {
+                throw new IllegalArgumentException("Cada material debe tener máquina asignada");
+            }
         }
     }
 

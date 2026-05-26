@@ -22,6 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pedidos")
+@PreAuthorize("hasAnyRole('ADMIN','PRODUCCION','CAJA','VENTAS_1','VENTAS_2','VENTAS_3','VENTAS_4','VENDEDORA')")
 public class PedidoController {
 
     private static final Logger log = LoggerFactory.getLogger(PedidoController.class);
@@ -82,6 +83,7 @@ public class PedidoController {
     }
 
     @PutMapping("/{pedidoId}/detalles/{detalleId}/estado")
+    @PreAuthorize("hasAnyRole('ADMIN','PRODUCCION')")
     public Pedido actualizarEstadoDetalle(
             @PathVariable Long pedidoId,
             @PathVariable Long detalleId,

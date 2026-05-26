@@ -19,6 +19,7 @@ public class UsuarioAdminService {
 
     private static final String PASSWORD_DEFECTO = "123456";
     private static final Pattern ROL_PATTERN = Pattern.compile("^[A-Z0-9_]{2,64}$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
 
     private final UsuarioRepository usuarioRepository;
     private final RolCatalogoRepository rolCatalogoRepository;
@@ -50,6 +51,9 @@ public class UsuarioAdminService {
             throw new IllegalArgumentException("El nombre es obligatorio");
         }
         String correo = req.getCorreo().trim().toLowerCase();
+        if (!EMAIL_PATTERN.matcher(correo).matches()) {
+            throw new IllegalArgumentException("Ingrese un correo válido");
+        }
         if (usuarioRepository.existsByCorreo(correo)) {
             throw new IllegalArgumentException("Ya existe un usuario con ese correo");
         }
@@ -61,6 +65,9 @@ public class UsuarioAdminService {
         String raw = req.getPassword() != null && !req.getPassword().isBlank()
                 ? req.getPassword()
                 : PASSWORD_DEFECTO;
+        if (raw.length() < 6) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres");
+        }
         u.setPassword(passwordEncoder.encode(raw));
         u.setActivo(req.getActivo() == null || Boolean.TRUE.equals(req.getActivo()));
         return UsuarioAdminResponse.fromEntity(usuarioRepository.save(u));
@@ -75,6 +82,9 @@ public class UsuarioAdminService {
         }
         if (req.getCorreo() != null && !req.getCorreo().isBlank()) {
             String correo = req.getCorreo().trim().toLowerCase();
+            if (!EMAIL_PATTERN.matcher(correo).matches()) {
+                throw new IllegalArgumentException("Ingrese un correo válido");
+            }
             usuarioRepository.findByCorreo(correo).ifPresent(other -> {
                 if (!other.getId().equals(id)) {
                     throw new IllegalArgumentException("Ya existe otro usuario con ese correo");
@@ -87,6 +97,9 @@ public class UsuarioAdminService {
             u.setRol(req.getRol().trim().toUpperCase());
         }
         if (req.getPassword() != null && !req.getPassword().isBlank()) {
+            if (req.getPassword().length() < 6) {
+                throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres");
+            }
             u.setPassword(passwordEncoder.encode(req.getPassword()));
         }
         if (req.getActivo() != null) {

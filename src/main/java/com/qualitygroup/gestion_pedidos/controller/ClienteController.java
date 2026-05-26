@@ -2,12 +2,14 @@ package com.qualitygroup.gestion_pedidos.controller;
 
 import com.qualitygroup.gestion_pedidos.model.Cliente;
 import com.qualitygroup.gestion_pedidos.service.ClienteService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/clientes")
+@PreAuthorize("hasAnyRole('ADMIN','PRODUCCION','CAJA','VENTAS_1','VENTAS_2','VENTAS_3','VENTAS_4','VENDEDORA')")
 public class ClienteController {
 
     private final ClienteService clienteService;
