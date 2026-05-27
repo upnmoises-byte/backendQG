@@ -1,0 +1,263 @@
+-- Seed manual de materiales y especiales Quality Group
+-- Compatible con MySQL / Railway. Re-ejecutable sin duplicar (INSERT IGNORE + índices únicos).
+
+SET NAMES utf8mb4;
+
+-- Índice único en materiales.nombre (si no existe)
+SET @idx_mat := (
+  SELECT COUNT(*) FROM information_schema.statistics
+  WHERE table_schema = DATABASE()
+    AND table_name = 'materiales'
+    AND index_name = 'uk_materiales_nombre'
+);
+SET @sql_mat := IF(@idx_mat = 0,
+  'ALTER TABLE materiales ADD UNIQUE INDEX uk_materiales_nombre (nombre)',
+  'SELECT 1');
+PREPARE stmt_mat FROM @sql_mat;
+EXECUTE stmt_mat;
+DEALLOCATE PREPARE stmt_mat;
+
+-- Índice único en catalogo_especiales.nombre (si no existe)
+SET @idx_esp := (
+  SELECT COUNT(*) FROM information_schema.statistics
+  WHERE table_schema = DATABASE()
+    AND table_name = 'catalogo_especiales'
+    AND index_name = 'uk_catalogo_especiales_nombre'
+);
+SET @sql_esp := IF(@idx_esp = 0,
+  'ALTER TABLE catalogo_especiales ADD UNIQUE INDEX uk_catalogo_especiales_nombre (nombre)',
+  'SELECT 1');
+PREPARE stmt_esp FROM @sql_esp;
+EXECUTE stmt_esp;
+DEALLOCATE PREPARE stmt_esp;
+
+-- Materiales (220)
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO BLANCO 18MM 2.44 X 2.15', 'PELIKANO', 'BLANCO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO NEGRO 18MM 2.44 X 2.15', 'PELIKANO', 'NEGRO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO NEVADO 18MM 2.44 X 2.15', 'PELIKANO', 'NEVADO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO GRIS 18MM 2.44 X 2.15', 'PELIKANO', 'GRIS', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO PLOMO 18MM 2.44 X 2.15', 'PELIKANO', 'PLOMO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO WENGUE 18MM 2.44 X 2.15', 'PELIKANO', 'WENGUE', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CEDRO 18MM 2.44 X 2.15', 'PELIKANO', 'CEDRO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO LINO 18MM 2.44 X 2.15', 'PELIKANO', 'LINO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ROBLE GRIS 18MM 2.44 X 2.15', 'PELIKANO', 'ROBLE GRIS', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO OLIVO 18MM 2.44 X 2.15', 'PELIKANO', 'OLIVO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CARAMELO 18MM 2.44 X 2.15', 'PELIKANO', 'CARAMELO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ROVERE 18MM 2.44 X 2.15', 'PELIKANO', 'ROVERE', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO GALES 18MM 2.44 X 2.15', 'PELIKANO', 'GALES', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CENIZA 18MM 2.44 X 2.15', 'PELIKANO', 'CENIZA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO MANZANO 18MM 2.44 X 2.15', 'PELIKANO', 'MANZANO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ESPRESSO 18MM 2.44 X 2.15', 'PELIKANO', 'ESPRESSO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ARTIKO 18MM 2.44 X 2.15', 'PELIKANO', 'ARTIKO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CAPRI 18MM 2.44 X 2.15', 'PELIKANO', 'CAPRI', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO MIEL 18MM 2.44 X 2.15', 'PELIKANO', 'MIEL', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CEMENTO 18MM 2.44 X 2.15', 'PELIKANO', 'CEMENTO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO TAUPE 18MM 2.44 X 2.15', 'PELIKANO', 'TAUPE', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO IBIZA 18MM 2.44 X 2.15', 'PELIKANO', 'IBIZA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO HABANO 18MM 2.44 X 2.15', 'PELIKANO', 'HABANO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO COÑAC 18MM 2.44 X 2.15', 'PELIKANO', 'COÑAC', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CARBON 18MM 2.44 X 2.15', 'PELIKANO', 'CARBON', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO BOSQUE 18MM 2.44 X 2.15', 'PELIKANO', 'BOSQUE', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ROBLE BLANCO 18MM 2.44 X 2.15', 'PELIKANO', 'ROBLE BLANCO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ROBLE NEGRO 18MM 2.44 X 2.15', 'PELIKANO', 'ROBLE NEGRO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO DUNA 18MM 2.44 X 2.15', 'PELIKANO', 'DUNA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO NIEBLA 18MM 2.44 X 2.15', 'PELIKANO', 'NIEBLA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CASTAÑO 18MM 2.44 X 2.15', 'PELIKANO', 'CASTAÑO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO NACAR 18MM 2.44 X 2.15', 'PELIKANO', 'NACAR', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO MACADAMIA 18MM 2.44 X 2.15', 'PELIKANO', 'MACADAMIA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO BELLOTA 18MM 2.44 X 2.15', 'PELIKANO', 'BELLOTA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO FUME 18MM 2.44 X 2.15', 'PELIKANO', 'FUME', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO MILAN 18MM 2.44 X 2.15', 'PELIKANO', 'MILAN', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO TIVOLI 18MM 2.44 X 2.15', 'PELIKANO', 'TIVOLI', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO NAZCA 18MM 2.44 X 2.15', 'PELIKANO', 'NAZCA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO TOQUILLA 18MM 2.44 X 2.15', 'PELIKANO', 'TOQUILLA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO AGAVE 18MM 2.44 X 2.15', 'PELIKANO', 'AGAVE', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ARUPO 18MM 2.44 X 2.15', 'PELIKANO', 'ARUPO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO BARDOLINO 18MM 2.44 X 2.15', 'PELIKANO', 'BARDOLINO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO PANELA 18MM 2.44 X 2.15', 'PELIKANO', 'PANELA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO GALAPAGOS 18MM 2.44 X 2.15', 'PELIKANO', 'GALAPAGOS', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO MAMBA 18MM 2.44 X 2.15', 'PELIKANO', 'MAMBA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO AVELLANA 18MM 2.44 X 2.15', 'PELIKANO', 'AVELLANA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO BURDEOS 18MM 2.44 X 2.15', 'PELIKANO', 'BURDEOS', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO AMBAR 18MM 2.44 X 2.15', 'PELIKANO', 'AMBAR', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO INOX 18MM 2.44 X 2.15', 'PELIKANO', 'INOX', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CARTAGENA 18MM 2.44 X 2.15', 'PELIKANO', 'CARTAGENA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO POSITANO 18MM 2.44 X 2.15', 'PELIKANO', 'POSITANO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO BLANCO RH 18MM 2.44 X 2.15', 'PELIKANO', 'BLANCO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO NEGRO RH 18MM 2.44 X 2.15', 'PELIKANO', 'NEGRO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO NEVADO RH 18MM 2.44 X 2.15', 'PELIKANO', 'NEVADO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO GRIS RH 18MM 2.44 X 2.15', 'PELIKANO', 'GRIS', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO PLOMO RH 18MM 2.44 X 2.15', 'PELIKANO', 'PLOMO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO WENGUE RH 18MM 2.44 X 2.15', 'PELIKANO', 'WENGUE', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CEDRO RH 18MM 2.44 X 2.15', 'PELIKANO', 'CEDRO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO LINO RH 18MM 2.44 X 2.15', 'PELIKANO', 'LINO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ROBLE GRIS RH 18MM 2.44 X 2.15', 'PELIKANO', 'ROBLE GRIS', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO OLIVO RH 18MM 2.44 X 2.15', 'PELIKANO', 'OLIVO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CARAMELO RH 18MM 2.44 X 2.15', 'PELIKANO', 'CARAMELO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ROVERE RH 18MM 2.44 X 2.15', 'PELIKANO', 'ROVERE', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO GALES RH 18MM 2.44 X 2.15', 'PELIKANO', 'GALES', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CENIZA RH 18MM 2.44 X 2.15', 'PELIKANO', 'CENIZA', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO MANZANO RH 18MM 2.44 X 2.15', 'PELIKANO', 'MANZANO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ESPRESSO RH 18MM 2.44 X 2.15', 'PELIKANO', 'ESPRESSO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ARTIKO RH 18MM 2.44 X 2.15', 'PELIKANO', 'ARTIKO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CAPRI RH 18MM 2.44 X 2.15', 'PELIKANO', 'CAPRI', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO MIEL RH 18MM 2.44 X 2.15', 'PELIKANO', 'MIEL', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CEMENTO RH 18MM 2.44 X 2.15', 'PELIKANO', 'CEMENTO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO TAUPE RH 18MM 2.44 X 2.15', 'PELIKANO', 'TAUPE', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO IBIZA RH 18MM 2.44 X 2.15', 'PELIKANO', 'IBIZA', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO HABANO RH 18MM 2.44 X 2.15', 'PELIKANO', 'HABANO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO COÑAC RH 18MM 2.44 X 2.15', 'PELIKANO', 'COÑAC', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CARBON RH 18MM 2.44 X 2.15', 'PELIKANO', 'CARBON', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO BOSQUE RH 18MM 2.44 X 2.15', 'PELIKANO', 'BOSQUE', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ROBLE BLANCO RH 18MM 2.44 X 2.15', 'PELIKANO', 'ROBLE BLANCO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ROBLE NEGRO RH 18MM 2.44 X 2.15', 'PELIKANO', 'ROBLE NEGRO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO DUNA RH 18MM 2.44 X 2.15', 'PELIKANO', 'DUNA', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO NIEBLA RH 18MM 2.44 X 2.15', 'PELIKANO', 'NIEBLA', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CASTAÑO RH 18MM 2.44 X 2.15', 'PELIKANO', 'CASTAÑO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO NACAR RH 18MM 2.44 X 2.15', 'PELIKANO', 'NACAR', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO MACADAMIA RH 18MM 2.44 X 2.15', 'PELIKANO', 'MACADAMIA', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO BELLOTA RH 18MM 2.44 X 2.15', 'PELIKANO', 'BELLOTA', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO FUME RH 18MM 2.44 X 2.15', 'PELIKANO', 'FUME', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO MILAN RH 18MM 2.44 X 2.15', 'PELIKANO', 'MILAN', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO TIVOLI RH 18MM 2.44 X 2.15', 'PELIKANO', 'TIVOLI', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO NAZCA RH 18MM 2.44 X 2.15', 'PELIKANO', 'NAZCA', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO TOQUILLA RH 18MM 2.44 X 2.15', 'PELIKANO', 'TOQUILLA', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO AGAVE RH 18MM 2.44 X 2.15', 'PELIKANO', 'AGAVE', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO ARUPO RH 18MM 2.44 X 2.15', 'PELIKANO', 'ARUPO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO BARDOLINO RH 18MM 2.44 X 2.15', 'PELIKANO', 'BARDOLINO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO PANELA RH 18MM 2.44 X 2.15', 'PELIKANO', 'PANELA', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO GALAPAGOS RH 18MM 2.44 X 2.15', 'PELIKANO', 'GALAPAGOS', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO MAMBA RH 18MM 2.44 X 2.15', 'PELIKANO', 'MAMBA', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO AVELLANA RH 18MM 2.44 X 2.15', 'PELIKANO', 'AVELLANA', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO BURDEOS RH 18MM 2.44 X 2.15', 'PELIKANO', 'BURDEOS', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO AMBAR RH 18MM 2.44 X 2.15', 'PELIKANO', 'AMBAR', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO INOX RH 18MM 2.44 X 2.15', 'PELIKANO', 'INOX', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO CARTAGENA RH 18MM 2.44 X 2.15', 'PELIKANO', 'CARTAGENA', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA PELIKANO POSITANO RH 18MM 2.44 X 2.15', 'PELIKANO', 'POSITANO', 'RH', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS BLANCO 18MM 2.44 X 2.15', 'HISPANOS', 'BLANCO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ALMENDRA 18MM 2.44 X 2.15', 'HISPANOS', 'ALMENDRA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS GRIS 18MM 2.44 X 2.15', 'HISPANOS', 'GRIS', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS NEGRO 18MM 2.44 X 2.15', 'HISPANOS', 'NEGRO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ROSADO 18MM 2.44 X 2.15', 'HISPANOS', 'ROSADO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS NARANJA 18MM 2.44 X 2.15', 'HISPANOS', 'NARANJA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ROJO 18MM 2.44 X 2.15', 'HISPANOS', 'ROJO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS AZUL 18MM 2.44 X 2.15', 'HISPANOS', 'AZUL', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS AMARILLO 18MM 2.44 X 2.15', 'HISPANOS', 'AMARILLO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS FUCSIA 18MM 2.44 X 2.15', 'HISPANOS', 'FUCSIA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS GRIS GRAFITO 18MM 2.44 X 2.15', 'HISPANOS', 'GRIS GRAFITO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS LILA 18MM 2.44 X 2.15', 'HISPANOS', 'LILA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS VERDE 18MM 2.44 X 2.15', 'HISPANOS', 'VERDE', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ALUMINIO 18MM 2.44 X 2.15', 'HISPANOS', 'ALUMINIO', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS VIOLETA 18MM 2.44 X 2.15', 'HISPANOS', 'VIOLETA', 'NORMAL', '18MM', '2.44 x 2.15', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CEREZO 18MM 2.44 X 2.14', 'HISPANOS', 'CEREZO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS SAPELLI 18MM 2.44 X 2.14', 'HISPANOS', 'SAPELLI', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS WENGUE 18MM 2.44 X 2.14', 'HISPANOS', 'WENGUE', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CEDRO 18MM 2.44 X 2.14', 'HISPANOS', 'CEDRO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS HAYA 18MM 2.44 X 2.14', 'HISPANOS', 'HAYA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ROBLE BURALO 18MM 2.44 X 2.14', 'HISPANOS', 'ROBLE BURALO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CHOCOLATE 18MM 2.44 X 2.14', 'HISPANOS', 'CHOCOLATE', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ALBA LINEAL 18MM 2.44 X 2.14', 'HISPANOS', 'ALBA LINEAL', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CASTAÑO LINEAL 18MM 2.44 X 2.14', 'HISPANOS', 'CASTAÑO LINEAL', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS GLACIAL 18MM 2.44 X 2.14', 'HISPANOS', 'GLACIAL', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CHIAVENNA 18MM 2.44 X 2.14', 'HISPANOS', 'CHIAVENNA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CAPUCHINO 18MM 2.44 X 2.14', 'HISPANOS', 'CAPUCHINO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CENIZO 18MM 2.44 X 2.14', 'HISPANOS', 'CENIZO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CROMA 18MM 2.44 X 2.14', 'HISPANOS', 'CROMA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS OLMO GRIS 18MM 2.44 X 2.14', 'HISPANOS', 'OLMO GRIS', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS PERILLO 18MM 2.44 X 2.14', 'HISPANOS', 'PERILLO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ROBLE CANELA 18MM 2.44 X 2.14', 'HISPANOS', 'ROBLE CANELA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ROVERE KENDAL 18MM 2.44 X 2.14', 'HISPANOS', 'ROVERE KENDAL', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS TELLURIAN 18MM 2.44 X 2.14', 'HISPANOS', 'TELLURIAN', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ROBLE CAFÉ 18MM 2.44 X 2.14', 'HISPANOS', 'ROBLE CAFÉ', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CANYON 18MM 2.44 X 2.14', 'HISPANOS', 'CANYON', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS SONOMA 18MM 2.44 X 2.14', 'HISPANOS', 'SONOMA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS MARBELLA 18MM 2.44 X 2.14', 'HISPANOS', 'MARBELLA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS MONACO 18MM 2.44 X 2.14', 'HISPANOS', 'MONACO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS SIBERIA 18MM 2.44 X 2.14', 'HISPANOS', 'SIBERIA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS DAMASCO 18MM 2.44 X 2.14', 'HISPANOS', 'DAMASCO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS DOLCETTO 18MM 2.44 X 2.14', 'HISPANOS', 'DOLCETTO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS MACCHIATO 18MM 2.44 X 2.14', 'HISPANOS', 'MACCHIATO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS MARMOL NEVADA 18MM 2.44 X 2.14', 'HISPANOS', 'MARMOL NEVADA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS HABANA 18MM 2.44 X 2.14', 'HISPANOS', 'HABANA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ALASKA 18MM 2.44 X 2.14', 'HISPANOS', 'ALASKA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS MALLORCA 18MM 2.44 X 2.14', 'HISPANOS', 'MALLORCA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS BAVARIA 18MM 2.44 X 2.14', 'HISPANOS', 'BAVARIA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CATANIA 18MM 2.44 X 2.14', 'HISPANOS', 'CATANIA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS POLAR 18MM 2.44 X 2.14', 'HISPANOS', 'POLAR', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS DUQUESA 18MM 2.44 X 2.14', 'HISPANOS', 'DUQUESA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS TEXTIL NORDICO 18MM 2.44 X 2.14', 'HISPANOS', 'TEXTIL NORDICO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS WHISKY OAK 18MM 2.44 X 2.14', 'HISPANOS', 'WHISKY OAK', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS DELFIN ARENA 18MM 2.44 X 2.14', 'HISPANOS', 'DELFIN ARENA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ENTABLADO 18MM 2.44 X 2.14', 'HISPANOS', 'ENTABLADO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS FLORESTA 18MM 2.44 X 2.14', 'HISPANOS', 'FLORESTA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS GARDEN OAK 18MM 2.44 X 2.14', 'HISPANOS', 'GARDEN OAK', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS TERRACOTA 18MM 2.44 X 2.14', 'HISPANOS', 'TERRACOTA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS AZUL MEDITERRANEO 18MM 2.44 X 2.14', 'HISPANOS', 'AZUL MEDITERRANEO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS TAUPE 18MM 2.44 X 2.14', 'HISPANOS', 'TAUPE', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS PIETRA CASPIO 18MM 2.44 X 2.14', 'HISPANOS', 'PIETRA CASPIO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS VICENZA 18MM 2.44 X 2.14', 'HISPANOS', 'VICENZA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS VULCANO 18MM 2.44 X 2.14', 'HISPANOS', 'VULCANO', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS MARQUINA 18MM 2.44 X 2.14', 'HISPANOS', 'MARQUINA', 'NORMAL', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS BLANCO RH 18MM 2.44 X 2.14', 'HISPANOS', 'BLANCO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ALMENDRA RH 18MM 2.44 X 2.14', 'HISPANOS', 'ALMENDRA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS GRIS RH 18MM 2.44 X 2.14', 'HISPANOS', 'GRIS', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS NEGRO RH 18MM 2.44 X 2.14', 'HISPANOS', 'NEGRO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS GRIS GRAFITO RH 18MM 2.44 X 2.14', 'HISPANOS', 'GRIS GRAFITO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CEREZO RH 18MM 2.44 X 2.14', 'HISPANOS', 'CEREZO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS SAPELLI RH 18MM 2.44 X 2.14', 'HISPANOS', 'SAPELLI', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS WENGUE RH 18MM 2.44 X 2.14', 'HISPANOS', 'WENGUE', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CEDRO RH 18MM 2.44 X 2.14', 'HISPANOS', 'CEDRO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS HAYA RH 18MM 2.44 X 2.14', 'HISPANOS', 'HAYA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ROBLE BURALO RH 18MM 2.44 X 2.14', 'HISPANOS', 'ROBLE BURALO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CHOCOLATE RH 18MM 2.44 X 2.14', 'HISPANOS', 'CHOCOLATE', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ALBA LINEAL RH 18MM 2.44 X 2.14', 'HISPANOS', 'ALBA LINEAL', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CASTAÑO LINEAL RH 18MM 2.44 X 2.14', 'HISPANOS', 'CASTAÑO LINEAL', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS GLACIAL RH 18MM 2.44 X 2.14', 'HISPANOS', 'GLACIAL', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CHIAVENNA RH 18MM 2.44 X 2.14', 'HISPANOS', 'CHIAVENNA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CAPUCHINO RH 18MM 2.44 X 2.14', 'HISPANOS', 'CAPUCHINO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CENIZO RH 18MM 2.44 X 2.14', 'HISPANOS', 'CENIZO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CROMA RH 18MM 2.44 X 2.14', 'HISPANOS', 'CROMA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS OLMO GRIS RH 18MM 2.44 X 2.14', 'HISPANOS', 'OLMO GRIS', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS PERILLO RH 18MM 2.44 X 2.14', 'HISPANOS', 'PERILLO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ROBLE CANELA RH 18MM 2.44 X 2.14', 'HISPANOS', 'ROBLE CANELA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ROVERE KENDAL RH 18MM 2.44 X 2.14', 'HISPANOS', 'ROVERE KENDAL', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS TELLURIAN RH 18MM 2.44 X 2.14', 'HISPANOS', 'TELLURIAN', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ROBLE CAFÉ RH 18MM 2.44 X 2.14', 'HISPANOS', 'ROBLE CAFÉ', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CANYON RH 18MM 2.44 X 2.14', 'HISPANOS', 'CANYON', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS SONOMA RH 18MM 2.44 X 2.14', 'HISPANOS', 'SONOMA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS MARBELLA RH 18MM 2.44 X 2.14', 'HISPANOS', 'MARBELLA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS MONACO RH 18MM 2.44 X 2.14', 'HISPANOS', 'MONACO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS SIBERIA RH 18MM 2.44 X 2.14', 'HISPANOS', 'SIBERIA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS DAMASCO RH 18MM 2.44 X 2.14', 'HISPANOS', 'DAMASCO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS DOLCETTO RH 18MM 2.44 X 2.14', 'HISPANOS', 'DOLCETTO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS MACCHIATO RH 18MM 2.44 X 2.14', 'HISPANOS', 'MACCHIATO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS MARMOL NEVADA RH 18MM 2.44 X 2.14', 'HISPANOS', 'MARMOL NEVADA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS HABANA RH 18MM 2.44 X 2.14', 'HISPANOS', 'HABANA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ALASKA RH 18MM 2.44 X 2.14', 'HISPANOS', 'ALASKA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS MALLORCA RH 18MM 2.44 X 2.14', 'HISPANOS', 'MALLORCA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS BAVARIA RH 18MM 2.44 X 2.14', 'HISPANOS', 'BAVARIA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS CATANIA RH 18MM 2.44 X 2.14', 'HISPANOS', 'CATANIA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS POLAR RH 18MM 2.44 X 2.14', 'HISPANOS', 'POLAR', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS DUQUESA RH 18MM 2.44 X 2.14', 'HISPANOS', 'DUQUESA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS TEXTIL NORDICO RH 18MM 2.44 X 2.14', 'HISPANOS', 'TEXTIL NORDICO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS WHISKY OAK RH 18MM 2.44 X 2.14', 'HISPANOS', 'WHISKY OAK', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS DELFIN ARENA RH 18MM 2.44 X 2.14', 'HISPANOS', 'DELFIN ARENA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS ENTABLADO RH 18MM 2.44 X 2.14', 'HISPANOS', 'ENTABLADO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS FLORESTA RH 18MM 2.44 X 2.14', 'HISPANOS', 'FLORESTA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS GARDEN OAK RH 18MM 2.44 X 2.14', 'HISPANOS', 'GARDEN OAK', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS TERRACOTA RH 18MM 2.44 X 2.14', 'HISPANOS', 'TERRACOTA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS AZUL MEDITERRANEO RH 18MM 2.44 X 2.14', 'HISPANOS', 'AZUL MEDITERRANEO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS TAUPE RH 18MM 2.44 X 2.14', 'HISPANOS', 'TAUPE', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS PIETRA CASPIO RH 18MM 2.44 X 2.14', 'HISPANOS', 'PIETRA CASPIO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS VICENZA RH 18MM 2.44 X 2.14', 'HISPANOS', 'VICENZA', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS VULCANO RH 18MM 2.44 X 2.14', 'HISPANOS', 'VULCANO', 'RH', '18MM', '2.44 x 2.14', 1);
+INSERT IGNORE INTO materiales (nombre, marca, color, tipo, espesor, medida, activo) VALUES ('MELAMINA HISPANOS MARQUINA RH 18MM 2.44 X 2.14', 'HISPANOS', 'MARQUINA', 'RH', '18MM', '2.44 x 2.14', 1);
+
+-- Especiales (7)
+INSERT IGNORE INTO catalogo_especiales (nombre, descripcion, activo) VALUES ('PUNTAS BOLEADAS', 'PUNTAS BOLEADAS', 1);
+INSERT IGNORE INTO catalogo_especiales (nombre, descripcion, activo) VALUES ('CORTES L', 'CORTES L', 1);
+INSERT IGNORE INTO catalogo_especiales (nombre, descripcion, activo) VALUES ('CORTE ESPECIAL DEL CLIENTE', 'CORTE ESPECIAL DEL CLIENTE', 1);
+INSERT IGNORE INTO catalogo_especiales (nombre, descripcion, activo) VALUES ('REGROSADO CON TORNILLO', 'REGROSADO CON TORNILLO', 1);
+INSERT IGNORE INTO catalogo_especiales (nombre, descripcion, activo) VALUES ('REGROSADO CON PEGAMENTO', 'REGROSADO CON PEGAMENTO', 1);
+INSERT IGNORE INTO catalogo_especiales (nombre, descripcion, activo) VALUES ('CHAFLANES', 'CHAFLANES', 1);
+INSERT IGNORE INTO catalogo_especiales (nombre, descripcion, activo) VALUES ('CORTE 45°', 'CORTE 45°', 1);
