@@ -58,8 +58,8 @@ public class PedidoController {
     }
 
     @GetMapping("/siguiente-numero")
-    public Map<String, String> siguienteNumero(@RequestParam(defaultValue = "27000") String serie) {
-        return Map.of("numeroOrden", pedidoService.siguienteNumeroOrden(serie));
+    public Map<String, String> siguienteNumero() {
+        return Map.of("numeroOrden", pedidoService.siguienteNumeroOrden());
     }
 
     @GetMapping("/{id}/pagos")

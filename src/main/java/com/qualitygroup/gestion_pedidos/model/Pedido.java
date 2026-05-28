@@ -22,6 +22,7 @@ public class Pedido {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
+    @Column(unique = true, length = 20)
     private String numeroOrden;
     private BigDecimal cantidad;
     private String colorPrincipal;

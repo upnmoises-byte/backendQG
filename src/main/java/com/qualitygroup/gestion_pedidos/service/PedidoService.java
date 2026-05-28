@@ -1,5 +1,6 @@
 package com.qualitygroup.gestion_pedidos.service;
 
+import com.qualitygroup.gestion_pedidos.exception.CorrelativoPedidoException;
 import com.qualitygroup.gestion_pedidos.model.AuditoriaPedido;
 import com.qualitygroup.gestion_pedidos.model.Pedido;
 import com.qualitygroup.gestion_pedidos.model.PedidoDetalle;
@@ -24,6 +25,8 @@ import java.util.Optional;
 public class PedidoService {
 
     private static final String ESTADO_DEFECTO = "CORTE";
+    private static final int NUMERO_ORDEN_INICIAL = 27001;
+    private static final int LONGITUD_MAX_NUMERO_ORDEN = 10;
 
     private final PedidoRepository pedidoRepository;
     private final AuditoriaPedidoRepository auditoriaRepository;
@@ -51,22 +54,14 @@ public class PedidoService {
         return pedidoRepository.findById(id);
     }
 
-    public String siguienteNumeroOrden(String serieRaw) {
-        String serie = (serieRaw == null || serieRaw.isBlank()) ? "27000" : serieRaw.trim();
-        int base;
-        try {
-            base = Integer.parseInt(serie);
-        } catch (NumberFormatException ex) {
-            throw new IllegalArgumentException("Serie inválida");
-        }
-        String prefijo = serie.length() >= 2 ? serie.substring(0, 2) : serie;
-        int max = pedidoRepository.findByNumeroOrdenStartingWith(prefijo).stream()
-                .map(Pedido::getNumeroOrden)
-                .filter(n -> n != null && n.matches("\\d+"))
-                .mapToInt(Integer::parseInt)
-                .max()
-                .orElse(base);
-        return String.valueOf(Math.max(max, base) + 1);
+    public String siguienteNumeroOrden() {
+        int max = pedidoRepository.findAllNumeroOrdenes().stream()
+                .map(this::parseNumeroOrdenValido)
+                .flatMap(Optional::stream)
+                .max(Integer::compareTo)
+                .orElse(NUMERO_ORDEN_INICIAL - 1);
+        int siguiente = Math.max(max + 1, NUMERO_ORDEN_INICIAL);
+        return String.valueOf(siguiente);
     }
 
     public Pedido guardar(Pedido pedido) {
@@ -100,6 +95,7 @@ public class PedidoService {
 
         normalizarPedido(pedido);
         validarPedido(pedido, null);
+        validarCorrelativoCreacion(pedido.getNumeroOrden());
         return pedidoRepository.save(pedido);
     }
 
@@ -117,7 +113,10 @@ public class PedidoService {
         String estadoAnteriorPedido = actual.getEstado();
         Map<Long, String> estadosDetalleAntes = mapaEstadosDetalle(actual);
 
-        actual.setNumeroOrden(pedidoActualizado.getNumeroOrden());
+        if (pedidoActualizado.getNumeroOrden() != null
+                && !pedidoActualizado.getNumeroOrden().trim().equals(actual.getNumeroOrden())) {
+            throw new IllegalArgumentException("El N° de orden no se puede modificar.");
+        }
         actual.setCliente(pedidoActualizado.getCliente());
         actual.setVendedora(pedidoActualizado.getVendedora());
         actual.setObservaciones(pedidoActualizado.getObservaciones());
@@ -276,6 +275,12 @@ public class PedidoService {
         if (pedido.getNumeroOrden() == null || pedido.getNumeroOrden().isBlank()) {
             throw new IllegalArgumentException("Ingrese el N° de orden");
         }
+        if (!pedido.getNumeroOrden().matches("\\d+")) {
+            throw new IllegalArgumentException("El N° de orden debe contener solo números.");
+        }
+        if (pedido.getNumeroOrden().length() > LONGITUD_MAX_NUMERO_ORDEN) {
+            throw new IllegalArgumentException("El N° de orden excede la longitud permitida.");
+        }
         pedidoRepository.findFirstByNumeroOrden(pedido.getNumeroOrden().trim()).ifPresent(existente -> {
             if (idActual == null || !Objects.equals(existente.getId(), idActual)) {
                 throw new IllegalArgumentException("Ya existe un pedido registrado con este número de orden.");
@@ -330,6 +335,30 @@ public class PedidoService {
             if (detalle.getMaquina() == null || detalle.getMaquina().isBlank()) {
                 throw new IllegalArgumentException("Cada material debe tener máquina asignada");
             }
+        }
+    }
+
+    private void validarCorrelativoCreacion(String numeroOrdenRecibido) {
+        String esperado = siguienteNumeroOrden();
+        if (!esperado.equals(numeroOrdenRecibido)) {
+            throw new CorrelativoPedidoException(
+                    "El número de pedido no corresponde al correlativo actual. Debe ser " + esperado + "."
+            );
+        }
+    }
+
+    private Optional<Integer> parseNumeroOrdenValido(String numeroOrden) {
+        if (numeroOrden == null) {
+            return Optional.empty();
+        }
+        String limpio = numeroOrden.trim();
+        if (!limpio.matches("\\d+")) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(Integer.parseInt(limpio));
+        } catch (NumberFormatException ex) {
+            return Optional.empty();
         }
     }
 

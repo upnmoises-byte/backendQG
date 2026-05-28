@@ -22,6 +22,9 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     List<Pedido> findByNumeroOrdenStartingWith(String prefijo);
 
+    @Query("SELECT p.numeroOrden FROM Pedido p WHERE p.numeroOrden IS NOT NULL")
+    List<String> findAllNumeroOrdenes();
+
     @Query("SELECT DISTINCT p FROM Pedido p LEFT JOIN FETCH p.cliente LEFT JOIN FETCH p.detalles")
     List<Pedido> findAllWithDetalles();
 

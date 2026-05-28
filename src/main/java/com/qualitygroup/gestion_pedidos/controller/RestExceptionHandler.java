@@ -1,5 +1,6 @@
 package com.qualitygroup.gestion_pedidos.controller;
 
+import com.qualitygroup.gestion_pedidos.exception.CorrelativoPedidoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -60,6 +61,14 @@ public class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
                 "error", "CONFLICT",
                 "mensaje", mensaje
+        ));
+    }
+
+    @ExceptionHandler(CorrelativoPedidoException.class)
+    public ResponseEntity<Map<String, Object>> correlativoConflict(CorrelativoPedidoException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                "error", "CONFLICT",
+                "mensaje", ex.getMessage() != null ? ex.getMessage() : "Conflicto de correlativo en N° de orden."
         ));
     }
 
