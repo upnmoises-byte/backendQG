@@ -1,7 +1,10 @@
 package com.qualitygroup.gestion_pedidos.controller;
 
 import com.qualitygroup.gestion_pedidos.dto.ReportePedidosFiltro;
+import com.qualitygroup.gestion_pedidos.repository.UsuarioRepository;
+import com.qualitygroup.gestion_pedidos.security.AppRoles;
 import com.qualitygroup.gestion_pedidos.service.ReportePedidosPdfService;
+import com.qualitygroup.gestion_pedidos.util.VendedoraUtil;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,25 +18,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reportes")
-@PreAuthorize("hasAnyRole('ADMIN','PRODUCCION','CAJA','VENTAS_1','VENTAS_2','VENTAS_3','VENTAS_4','VENDEDORA')")
+@PreAuthorize(AppRoles.HAS_ANY_APP_ROLE)
 public class ReporteController {
 
-    private static final Map<String, String> VENDEDORA_POR_ROL = Map.of(
-            "VENTAS_1", "ISAMAR",
-            "VENTAS_2", "ANABEL",
-            "VENTAS_3", "DIANA",
-            "VENTAS_4", "MELISSA"
-    );
-
     private final ReportePedidosPdfService reportePedidosPdfService;
+    private final UsuarioRepository usuarioRepository;
 
-    public ReporteController(ReportePedidosPdfService reportePedidosPdfService) {
+    public ReporteController(
+            ReportePedidosPdfService reportePedidosPdfService,
+            UsuarioRepository usuarioRepository
+    ) {
         this.reportePedidosPdfService = reportePedidosPdfService;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @GetMapping(value = "/pedidos.pdf", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -70,20 +70,25 @@ public class ReporteController {
                 .body(body);
     }
 
-    private static Optional<String> vendedoraFijaPorRol(Authentication auth) {
+    private Optional<String> vendedoraFijaPorRol(Authentication auth) {
         if (auth == null) {
             return Optional.empty();
         }
+        boolean esVendedora = false;
         for (GrantedAuthority ga : auth.getAuthorities()) {
             if (ga == null || ga.getAuthority() == null) {
                 continue;
             }
             String r = ga.getAuthority().replace("ROLE_", "").trim().toUpperCase();
-            String v = VENDEDORA_POR_ROL.get(r);
-            if (v != null) {
-                return Optional.of(v);
+            if ("VENDEDORA".equals(r)) {
+                esVendedora = true;
+                break;
             }
         }
-        return Optional.empty();
+        if (!esVendedora) {
+            return Optional.empty();
+        }
+        return usuarioRepository.findByCorreoAndActivoTrue(auth.getName())
+                .flatMap(u -> VendedoraUtil.inferirCodigoDesdeNombre(u.getNombre()));
     }
 }

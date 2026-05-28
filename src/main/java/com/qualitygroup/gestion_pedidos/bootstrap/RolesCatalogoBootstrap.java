@@ -14,9 +14,7 @@ import org.springframework.stereotype.Component;
 public class RolesCatalogoBootstrap implements CommandLineRunner {
 
     private static final String[] ROLES = {
-            "ADMIN", "PRODUCCION", "CAJA",
-            "VENTAS_1", "VENTAS_2", "VENTAS_3", "VENTAS_4",
-            "VENDEDORA"
+            "ADMIN", "GERENCIA", "PRODUCCION", "CAJA", "VENDEDORA"
     };
 
     private final RolCatalogoRepository rolCatalogoRepository;

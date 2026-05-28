@@ -19,7 +19,7 @@ public class CatalogoEspecialController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','PRODUCCION','CAJA','VENTAS_1','VENTAS_2','VENTAS_3','VENTAS_4','VENDEDORA')")
+    @PreAuthorize(com.qualitygroup.gestion_pedidos.security.AppRoles.HAS_ANY_APP_ROLE)
     public List<CatalogoEspecial> listar(@RequestParam(required = false) Boolean soloActivos) {
         return catalogoEspecialService.listar(soloActivos);
     }

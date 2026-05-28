@@ -22,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pedidos")
-@PreAuthorize("hasAnyRole('ADMIN','PRODUCCION','CAJA','VENTAS_1','VENTAS_2','VENTAS_3','VENTAS_4','VENDEDORA')")
+@PreAuthorize(com.qualitygroup.gestion_pedidos.security.AppRoles.HAS_ANY_APP_ROLE)
 public class PedidoController {
 
     private static final Logger log = LoggerFactory.getLogger(PedidoController.class);

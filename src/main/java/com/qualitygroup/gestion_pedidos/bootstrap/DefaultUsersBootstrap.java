@@ -28,12 +28,13 @@ public class DefaultUsersBootstrap implements CommandLineRunner {
     @Override
     public void run(String... args) {
         crearSiNoExiste("Administrador", "admin@qg.com", PASSWORD_INICIAL, "ADMIN");
+        crearSiNoExiste("Gerencia", "gerencia@qg.com", PASSWORD_INICIAL, "GERENCIA");
         crearSiNoExiste("Producción", "produccion@qg.com", PASSWORD_INICIAL, "PRODUCCION");
         crearSiNoExiste("Caja", "caja@qg.com", PASSWORD_INICIAL, "CAJA");
-        crearSiNoExiste("Ventas 1 — Isamar", "isamar@qg.com", PASSWORD_INICIAL, "VENTAS_1");
-        crearSiNoExiste("Ventas 2 — Anabel", "anabel@qg.com", PASSWORD_INICIAL, "VENTAS_2");
-        crearSiNoExiste("Ventas 3 — Diana", "diana@qg.com", PASSWORD_INICIAL, "VENTAS_3");
-        crearSiNoExiste("Ventas 4 — Melissa", "melissa@qg.com", PASSWORD_INICIAL, "VENTAS_4");
+        crearSiNoExiste("Isamar", "isamar@qg.com", PASSWORD_INICIAL, "VENDEDORA");
+        crearSiNoExiste("Anabel", "anabel@qg.com", PASSWORD_INICIAL, "VENDEDORA");
+        crearSiNoExiste("Diana", "diana@qg.com", PASSWORD_INICIAL, "VENDEDORA");
+        crearSiNoExiste("Melissa", "melissa@qg.com", PASSWORD_INICIAL, "VENDEDORA");
     }
 
     private void crearSiNoExiste(String nombre, String correo, String passwordPlano, String rol) {
