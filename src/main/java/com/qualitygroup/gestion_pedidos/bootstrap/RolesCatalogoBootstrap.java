@@ -13,8 +13,12 @@ import org.springframework.stereotype.Component;
 @Order(1)
 public class RolesCatalogoBootstrap implements CommandLineRunner {
 
-    private static final String[] ROLES = {
-            "ADMIN", "GERENCIA", "PRODUCCION", "CAJA", "VENDEDORA"
+    private static final String[][] ROLES = {
+            {"ADMIN", "Administrador del sistema"},
+            {"GERENCIA", "Gerencia y supervisión"},
+            {"PRODUCCION", "Área de producción"},
+            {"CAJA", "Caja y cobranzas"},
+            {"VENDEDORA", "Ventas y atención al cliente"}
     };
 
     private final RolCatalogoRepository rolCatalogoRepository;
@@ -25,12 +29,21 @@ public class RolesCatalogoBootstrap implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        for (String nombre : ROLES) {
-            if (!rolCatalogoRepository.existsById(nombre)) {
-                RolCatalogo r = new RolCatalogo();
-                r.setNombre(nombre);
-                rolCatalogoRepository.save(r);
+        for (String[] par : ROLES) {
+            String nombre = par[0];
+            RolCatalogo r = rolCatalogoRepository.findById(nombre).orElseGet(() -> {
+                RolCatalogo nuevo = new RolCatalogo();
+                nuevo.setNombre(nombre);
+                nuevo.setActivo(true);
+                return nuevo;
+            });
+            if (r.getDescripcion() == null || r.getDescripcion().isBlank()) {
+                r.setDescripcion(par[1]);
             }
+            if (r.getActivo() == null) {
+                r.setActivo(true);
+            }
+            rolCatalogoRepository.save(r);
         }
     }
 }

@@ -11,4 +11,10 @@ public class RolCatalogo {
     @Id
     @Column(length = 64)
     private String nombre;
+
+    @Column(length = 255)
+    private String descripcion;
+
+    @Column(nullable = false)
+    private Boolean activo = true;
 }

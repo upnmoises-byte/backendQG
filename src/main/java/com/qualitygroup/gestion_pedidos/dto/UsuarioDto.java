@@ -4,6 +4,8 @@ import com.qualitygroup.gestion_pedidos.model.Usuario;
 import lombok.Builder;
 import lombok.Value;
 
+import java.util.List;
+
 @Value
 @Builder
 public class UsuarioDto {
@@ -12,13 +14,15 @@ public class UsuarioDto {
     String nombre;
     String correo;
     String rol;
+    List<String> permisos;
 
-    public static UsuarioDto fromEntity(Usuario u) {
+    public static UsuarioDto fromEntity(Usuario u, List<String> permisos) {
         return UsuarioDto.builder()
                 .id(u.getId())
                 .nombre(u.getNombre())
                 .correo(u.getCorreo())
                 .rol(u.getRol())
+                .permisos(permisos != null ? List.copyOf(permisos) : List.of())
                 .build();
     }
 }

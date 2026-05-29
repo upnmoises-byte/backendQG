@@ -149,13 +149,28 @@ public class UsuarioAdminService {
         rolCatalogoRepository.deleteById(nombre);
     }
 
+    @Transactional
+    public UsuarioAdminResponse actualizarRol(Long id, String rolRaw) {
+        if (rolRaw == null || rolRaw.isBlank()) {
+            throw new IllegalArgumentException("El rol es obligatorio");
+        }
+        validarRolCatalogo(rolRaw);
+        Usuario u = usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        u.setRol(rolRaw.trim().toUpperCase());
+        return UsuarioAdminResponse.fromEntity(usuarioRepository.save(u));
+    }
+
     private void validarRolCatalogo(String rol) {
         if (rol == null || rol.isBlank()) {
             throw new IllegalArgumentException("El rol es obligatorio");
         }
         String key = rol.trim().toUpperCase();
-        if (!rolCatalogoRepository.existsById(key)) {
-            throw new IllegalArgumentException("El rol no existe en el catálogo. Créelo primero en «Roles del sistema».");
+        RolCatalogo catalogo = rolCatalogoRepository.findById(key)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "El rol no existe en el catálogo. Créelo primero en «Roles del sistema»."));
+        if (!Boolean.TRUE.equals(catalogo.getActivo())) {
+            throw new IllegalArgumentException("El rol está desactivado");
         }
     }
 }

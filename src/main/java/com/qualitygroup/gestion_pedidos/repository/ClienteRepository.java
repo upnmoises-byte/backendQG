@@ -10,7 +10,13 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     List<Cliente> findByActivoTrue();
 
-    List<Cliente> findByNombreContainingIgnoreCase(String nombre);
+    List<Cliente> findByNombreContainingIgnoreCaseAndActivoTrue(String nombre);
 
-    Optional<Cliente> findFirstByDocumentoIgnoreCase(String documento);
+    Optional<Cliente> findByDocumentoIgnoreCase(String documento);
+
+    Optional<Cliente> findByDocumentoIgnoreCaseAndActivoTrue(String documento);
+
+    boolean existsByDocumentoIgnoreCaseAndActivoTrue(String documento);
+
+    boolean existsByDocumentoIgnoreCaseAndActivoTrueAndIdNot(String documento, Long id);
 }

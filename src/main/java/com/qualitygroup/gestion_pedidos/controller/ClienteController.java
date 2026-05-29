@@ -34,7 +34,14 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('CLIENTES_ELIMINAR') or hasRole('ADMIN')")
     public void eliminar(@PathVariable Long id) {
         clienteService.desactivar(id);
+    }
+
+    @PatchMapping("/{id}/reactivar")
+    @PreAuthorize("hasAuthority('CLIENTES_REACTIVAR') or hasRole('ADMIN')")
+    public Cliente reactivar(@PathVariable Long id) {
+        return clienteService.reactivar(id);
     }
 }

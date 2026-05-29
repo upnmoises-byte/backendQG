@@ -3,10 +3,12 @@ package com.qualitygroup.gestion_pedidos.service;
 import com.qualitygroup.gestion_pedidos.model.Cliente;
 import com.qualitygroup.gestion_pedidos.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ClienteService {
@@ -21,79 +23,133 @@ public class ClienteService {
         return clienteRepository.findByActivoTrue();
     }
 
+    public Optional<Cliente> buscarPorId(Long id) {
+        return clienteRepository.findById(id);
+    }
+
+    @Transactional
     public Cliente guardar(Cliente cliente) {
-        normalizarYValidarCliente(cliente, null);
-        if (cliente.getActivo() == null) {
-            cliente.setActivo(true);
+        normalizarCliente(cliente);
+        validarCamposCliente(cliente);
+
+        String documento = cliente.getDocumento();
+        Optional<Cliente> existente = clienteRepository.findByDocumentoIgnoreCase(documento);
+
+        if (existente.isPresent()) {
+            Cliente previo = existente.get();
+            if (Boolean.TRUE.equals(previo.getActivo())) {
+                throw new IllegalArgumentException("Ya existe un cliente activo con este documento");
+            }
+            aplicarDatosCliente(previo, cliente);
+            previo.setActivo(true);
+            return clienteRepository.save(previo);
         }
 
+        validarNombreUnicoActivo(cliente.getNombre(), null);
+        cliente.setActivo(true);
         return clienteRepository.save(cliente);
     }
 
+    @Transactional
     public Cliente actualizar(Long id, Cliente cliente) {
         Cliente actual = clienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-        normalizarYValidarCliente(cliente, id);
+        normalizarCliente(cliente);
+        validarCamposCliente(cliente);
 
-        actual.setNombre(cliente.getNombre());
-        actual.setDocumento(cliente.getDocumento());
-        actual.setTelefono(cliente.getTelefono());
-        actual.setCorreo(cliente.getCorreo());
-        actual.setDireccion(cliente.getDireccion());
-        actual.setTipoCliente(cliente.getTipoCliente());
-        actual.setActivo(cliente.getActivo() != null ? cliente.getActivo() : actual.getActivo());
+        if (clienteRepository.existsByDocumentoIgnoreCaseAndActivoTrueAndIdNot(cliente.getDocumento(), id)) {
+            throw new IllegalArgumentException("Ya existe un cliente activo con este documento");
+        }
+
+        validarNombreUnicoActivo(cliente.getNombre(), id);
+
+        aplicarDatosCliente(actual, cliente);
+        if (cliente.getActivo() != null) {
+            actual.setActivo(cliente.getActivo());
+        }
 
         return clienteRepository.save(actual);
     }
 
+    @Transactional
     public void desactivar(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-
         cliente.setActivo(false);
         clienteRepository.save(cliente);
     }
 
-    private void normalizarYValidarCliente(Cliente cliente, Long idActual) {
+    @Transactional
+    public Cliente reactivar(Long id) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        if (Boolean.TRUE.equals(cliente.getActivo())) {
+            return cliente;
+        }
+        if (clienteRepository.existsByDocumentoIgnoreCaseAndActivoTrue(cliente.getDocumento())) {
+            throw new IllegalArgumentException("Ya existe un cliente activo con este documento");
+        }
+        cliente.setActivo(true);
+        return clienteRepository.save(cliente);
+    }
+
+    private void aplicarDatosCliente(Cliente destino, Cliente origen) {
+        destino.setNombre(origen.getNombre());
+        destino.setDocumento(origen.getDocumento());
+        destino.setTelefono(origen.getTelefono());
+        destino.setCorreo(origen.getCorreo());
+        destino.setDireccion(origen.getDireccion());
+        destino.setTipoCliente(origen.getTipoCliente());
+    }
+
+    private void normalizarCliente(Cliente cliente) {
         String documento = cliente.getDocumento() != null ? cliente.getDocumento().trim() : "";
         String nombre = cliente.getNombre() != null ? cliente.getNombre().trim() : "";
         String tipo = cliente.getTipoCliente() != null ? cliente.getTipoCliente().trim().toUpperCase(Locale.ROOT) : "";
 
-        if (documento.isBlank()) {
+        cliente.setDocumento(documento);
+        cliente.setNombre(normalizarNombre(nombre));
+        cliente.setTipoCliente(tipo.isBlank() ? cliente.getTipoCliente() : tipo);
+        if (cliente.getTelefono() != null) {
+            cliente.setTelefono(cliente.getTelefono().trim());
+        }
+        if (cliente.getCorreo() != null) {
+            cliente.setCorreo(cliente.getCorreo().trim().toLowerCase(Locale.ROOT));
+        }
+        if (cliente.getDireccion() != null) {
+            cliente.setDireccion(cliente.getDireccion().trim());
+        }
+    }
+
+    private void validarCamposCliente(Cliente cliente) {
+        if (cliente.getDocumento() == null || cliente.getDocumento().isBlank()) {
             throw new IllegalArgumentException("El documento del cliente es obligatorio.");
         }
-        if (!documento.matches("\\d+")) {
+        if (!cliente.getDocumento().matches("\\d+")) {
             throw new IllegalArgumentException("El documento solo debe contener números.");
         }
-        if ("DNI".equals(tipo) && documento.length() != 8) {
+        String tipo = cliente.getTipoCliente() != null ? cliente.getTipoCliente().toUpperCase(Locale.ROOT) : "";
+        if ("DNI".equals(tipo) && cliente.getDocumento().length() != 8) {
             throw new IllegalArgumentException("DNI inválido. Debe contener 8 dígitos");
         }
-        if ("RUC".equals(tipo) && documento.length() != 11) {
+        if ("RUC".equals(tipo) && cliente.getDocumento().length() != 11) {
             throw new IllegalArgumentException("RUC inválido. Debe contener 11 dígitos");
         }
-        if (nombre.isBlank()) {
+        if (cliente.getNombre() == null || cliente.getNombre().isBlank()) {
             throw new IllegalArgumentException("El nombre o razón social es obligatorio.");
         }
+    }
 
-        clienteRepository.findFirstByDocumentoIgnoreCase(documento).ifPresent(existente -> {
-            if (!Objects.equals(existente.getId(), idActual)) {
-                throw new IllegalArgumentException("Ya existe un cliente registrado con ese documento");
-            }
-        });
-
+    private void validarNombreUnicoActivo(String nombre, Long idExcluir) {
         String nombreNormalizado = normalizarNombre(nombre);
-        clienteRepository.findAll().stream()
-                .filter(c -> !Objects.equals(c.getId(), idActual))
+        clienteRepository.findByActivoTrue().stream()
+                .filter(c -> !Objects.equals(c.getId(), idExcluir))
                 .filter(c -> normalizarNombre(c.getNombre()).equals(nombreNormalizado))
                 .findFirst()
                 .ifPresent(c -> {
-                    throw new IllegalArgumentException("Ya existe un cliente con este nombre o razón social.");
+                    throw new IllegalArgumentException("Ya existe un cliente activo con este nombre o razón social.");
                 });
-
-        cliente.setDocumento(documento);
-        cliente.setNombre(nombre);
-        cliente.setTipoCliente(tipo.isBlank() ? cliente.getTipoCliente() : tipo);
     }
 
     private static String normalizarNombre(String nombre) {
